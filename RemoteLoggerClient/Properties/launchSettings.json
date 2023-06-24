@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "RemoteLoggerClient": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
