@@ -5,6 +5,8 @@ VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RemoteLoggerClient", "RemoteLoggerClient\RemoteLoggerClient.csproj", "{989F25ED-454A-495F-8D48-E3C657D255DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetricsMonitoringServer", "MetricsMonitoringServer\MetricsMonitoringServer.csproj", "{8713246F-BC24-4403-80A6-F28B3D7D721B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{989F25ED-454A-495F-8D48-E3C657D255DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{989F25ED-454A-495F-8D48-E3C657D255DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{989F25ED-454A-495F-8D48-E3C657D255DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8713246F-BC24-4403-80A6-F28B3D7D721B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8713246F-BC24-4403-80A6-F28B3D7D721B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8713246F-BC24-4403-80A6-F28B3D7D721B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8713246F-BC24-4403-80A6-F28B3D7D721B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
