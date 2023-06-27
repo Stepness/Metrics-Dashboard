@@ -1,8 +1,0 @@
-version: '3.4'
-
-services:
-  remoteloggerclient:
-    image: ${DOCKER_REGISTRY-}remoteloggerclient
-    build:
-      context: .
-      dockerfile: RemoteLoggerClient/Dockerfile
