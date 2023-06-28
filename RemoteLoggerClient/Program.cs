@@ -4,8 +4,10 @@ using RemoteLoggerClient.Models;
 
 var connectionId = Environment.GetEnvironmentVariable("HOSTNAME");
 
+Console.WriteLine("Connection starting...");
+
 var connection = new HubConnectionBuilder()
-    .WithUrl("http://host.docker.internal:5200/metricshub")
+    .WithUrl("http://host.docker.internal:5200/hubs/metrics")
     .WithAutomaticReconnect()
     .Build();
 
@@ -16,6 +18,10 @@ connection.Closed += async (error) =>
 };
 
 await connection.StartAsync();
+Console.WriteLine("Connection started");
+
+await connection.InvokeAsync("JoinClientGroup");
+Console.WriteLine("Joined client group");
 
 while (true)
 {
@@ -27,7 +33,8 @@ while (true)
         CPUUsagePercentage = Metrics.CpuUsage()
     };
 
-    await connection.SendAsync("ReceiveMessage", connectionId, metrics);
-    
+    Console.WriteLine("Sending message...");
+    await connection.SendAsync("SendBroadcastMessage", connectionId, metrics);
+    Console.WriteLine("Message sent");
     await Task.Delay(3000);
 }

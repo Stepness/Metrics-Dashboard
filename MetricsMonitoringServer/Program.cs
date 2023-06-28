@@ -10,7 +10,22 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 
+const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: myAllowSpecificOrigins,
+        policy  =>
+        {
+            policy
+                .AllowAnyHeader()
+                .AllowCredentials()
+                .WithOrigins("http://127.0.0.1:5500");
+        });
+});
+
 var app = builder.Build();
+
+app.UseCors(myAllowSpecificOrigins);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -23,6 +38,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapHub<MetricsHub>("/metricshub");
+app.MapHub<MetricsHub>("/hubs/metrics");
 
 app.Run();
