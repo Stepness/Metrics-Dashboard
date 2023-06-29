@@ -1,3 +1,4 @@
+using AutoMapper;
 using MetricsMonitoringServer.Models;
 using MetricsMonitoringServer.Settings;
 using Microsoft.AspNetCore.SignalR;
@@ -6,9 +7,19 @@ namespace MetricsMonitoringServer;
 
 public class MetricsHub : Hub
 {
+    private readonly IMapper _mapper;
+
+    public MetricsHub(IMapper mapper)
+    {
+        _mapper = mapper;
+    }
+    
     public async Task SendBroadcastMessage(string connectionId, MetricsDto metrics)
     {
-        await Clients.Group(HubSettings.DashboardGroup).SendAsync("ReceiveBroadcastMessage", connectionId, metrics);
+        var dashboardDto = _mapper.Map<DashboardDto>(metrics);
+        dashboardDto.ConnectionId = connectionId;
+        
+        await Clients.Group(HubSettings.DashboardGroup).SendAsync("ReceiveBroadcastMessage", dashboardDto);
     }
 
     public async Task JoinDashboardGroup()

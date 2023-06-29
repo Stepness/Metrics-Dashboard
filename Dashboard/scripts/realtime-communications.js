@@ -14,9 +14,8 @@ function startSignalR(){
         }
     }
 
-    connection.on("ReceiveBroadcastMessage", (connectionId, metrics) => {
-        console.log(connectionId);
-        console.log(metrics);
+    connection.on("ReceiveBroadcastMessage", (dashboardDto) => {
+        console.log(dashboardDto);
     })
 
     connection.onclose(async () => {
