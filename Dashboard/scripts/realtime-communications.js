@@ -16,6 +16,7 @@ function startSignalR(){
 
     connection.on("ReceiveBroadcastMessage", (dashboardDto) => {
         console.log(dashboardDto);
+        generateOrUpdateCard(dashboardDto)
     })
 
     connection.onclose(async () => {
@@ -25,3 +26,28 @@ function startSignalR(){
     // Start the connection.
     start();    
 }
+
+function generateOrUpdateCard(data) {
+    // Check if card already exists with the given ID
+    const existingCard = document.getElementById(data.connectionId);
+    
+    if (existingCard) {
+      // Update the values of existing card
+      existingCard.innerHTML = `
+        <p>${data.cpuUsagePercentage}</p>
+        <p>${data.ramUsageMegabytes}</p>
+      `;
+    } else {
+      // Create a new card
+      const cardContainer = document.getElementById('metrics-container');
+      const card = document.createElement('div');
+      card.id = data.connectionId;
+      card.className = 'card';
+      card.innerHTML = `
+        <p>${data.cpuUsagePercentage}</p>
+        <p>${data.ramUsageMegabytes}</p>
+      `;
+      cardContainer.appendChild(card);
+    }
+  }
+  
