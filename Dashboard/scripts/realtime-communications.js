@@ -1,5 +1,6 @@
 const connection = new signalR.HubConnectionBuilder()
-    .withUrl("http://localhost:5200/hubs/metrics")
+    //.withUrl("http://localhost:5200/hubs/metrics")
+    .withUrl("https://metrics-monitoring-server.azurewebsites.net/hubs/metrics")
     .configureLogging(signalR.LogLevel.Information)
     .build();
 

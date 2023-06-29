@@ -7,7 +7,8 @@ var connectionId = Environment.GetEnvironmentVariable("HOSTNAME");
 Console.WriteLine("Connection starting...");
 
 var connection = new HubConnectionBuilder()
-    .WithUrl("http://host.docker.internal:5200/hubs/metrics")
+    //.WithUrl("http://host.docker.internal:5200/hubs/metrics")
+    .WithUrl("https://metrics-monitoring-server.azurewebsites.net/hubs/metrics")
     .WithAutomaticReconnect()
     .Build();
 
