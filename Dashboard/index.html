@@ -2,41 +2,20 @@
 <html>
 <head>
   <title>Dashboard</title>
-  <script src="scripts/signalr/signalr.js"></script>
-  <script src="scripts/realtime-communications.js"></script>
+  <script src="assets/scripts/signalr/signalr.js"></script>
+  <script src="assets/scripts/realtime-communications.js"></script>
+  <link rel="stylesheet" href="assets/css/main.css" />
 </head>
-<style>
-  .card-container {
-    display: flex;
-    flex-wrap: wrap;
-  }
+<body> 
+  <header class="header">
+    <h1>Dashboard</h1>
+  </header>
+  <main>
+    <div class="card-container" id="metrics-container">
+      <!-- Metrics -->
+    </div>
 
-  .card {
-    width: 300px;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin: 10px;
-    padding: 15px;
-    background-color: #86c6e9;
-    color: #fff;
-  }
-
-  .card h2 {
-    font-size: 20px;
-    margin-top: 0;
-  }
-
-  .card p {
-    margin-bottom: 0;
-  }
-</style>
-<body>
-  <h1>Dashboard</h1>
-  
-  <div class="card-container" id="metrics-container">
-    <!-- Metrics will be dynamically added here -->
-  </div>
-
+  </main>
   <script>
     startSignalR();
   </script>

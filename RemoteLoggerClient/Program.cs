@@ -37,5 +37,5 @@ while (true)
     Console.WriteLine("Sending message...");
     await connection.SendAsync("SendBroadcastMessage", connectionId, metrics);
     Console.WriteLine("Message sent");
-    await Task.Delay(3000);
+    await Task.Delay(1000);
 }
