@@ -33,7 +33,7 @@ while (true)
         RamUsageMegabytes = Metrics.GetRamUsageMegabytes(),
         CPUName = await Metrics.GetCpuNameAsync(),
         DiskFreePercentage = Metrics.GetDiskSpacePercentage(),
-        CPUUsagePercentage = Metrics.GetCpuUsage(),
+        CPUUsagePercentage = await Metrics.GetCpuUsageAsync(),
         Eth0TransmittedBytes = Metrics.GetTransmittedBytesForEth0()
     };
 

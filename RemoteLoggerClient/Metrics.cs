@@ -16,7 +16,7 @@ public static class Metrics
 
         return _cpuName;
     }
-    
+
     public static long GetRamUsageMegabytes()
     {
         var processes = Process.GetProcesses();
@@ -34,8 +34,7 @@ public static class Metrics
 
         return freePercent;
     }
-    
-    
+
     private static async Task<string> RetrieveCpuAsync()
     {
         var cpu = Environment.GetEnvironmentVariable("CPU_NAME");
@@ -44,7 +43,7 @@ public static class Metrics
         {
             return cpu;
         }
-        
+
         using var reader = new StreamReader("/proc/cpuinfo");
 
         while (await reader.ReadLineAsync() is { } line)
@@ -57,12 +56,12 @@ public static class Metrics
 
         return cpu!;
     }
-    
+
     // https://www.baeldung.com/linux/get-cpu-usage#2-getting-cpu-usage-using-procstat
-    public static long GetCpuUsage()
+    public static async Task<long> GetCpuUsageAsync()
     {
         using var reader = new StreamReader("/proc/stat");
-        var line = reader.ReadLine();
+        var line = await reader.ReadLineAsync();
 
         if (line == null || !line.StartsWith("cpu ")) return 0;
         var cpuStats = line
@@ -75,21 +74,16 @@ public static class Metrics
 
         var averageIdleTime = (idle * 100) / total;
         return 100 - averageIdleTime;
-
     }
 
     public static long GetTransmittedBytesForEth0()
     {
         var interfaces = NetworkInterface.GetAllNetworkInterfaces();
 
-        foreach (var networkInterface in interfaces)
-        {
-            if (networkInterface is not { Name: "eth0", OperationalStatus: OperationalStatus.Up }) continue;
-            var statistics = networkInterface.GetIPv4Statistics();
-            return statistics.BytesSent;
-        }
+        var eth0If = interfaces
+            .FirstOrDefault(x => x is { Name: "eth0", OperationalStatus: OperationalStatus.Up });
 
-        throw new InvalidOperationException("The 'eth0' interface was not found.");
+        return eth0If?.GetIPv4Statistics().BytesSent ?? 0; 
+
     }
 }
-
