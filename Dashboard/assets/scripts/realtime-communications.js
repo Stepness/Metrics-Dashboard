@@ -72,7 +72,7 @@ function generateCardHTML(data) {
     </div>
     <div>
       <span class="label">Eth0 out:</span>
-      <span class="data">${data.eth0TransmittedBytes} Bytes</span>
+      <span class="data">${data.eth0TransmittedBytes.toLocaleString()} Bytes</span>
     </div>
   `;
 }
