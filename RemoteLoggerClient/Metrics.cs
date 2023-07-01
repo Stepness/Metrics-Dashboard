@@ -4,6 +4,18 @@ namespace RemoteLoggerClient;
 
 public static class Metrics
 {
+    private static string cpuName;
+
+    public static async Task<string> CpuNameAsync()
+    {
+        if (string.IsNullOrEmpty(cpuName))
+        {
+            cpuName = await GetCpuNameAsync();
+        }
+
+        return cpuName;
+    }
+    
     public static long RamUsageMegabytes()
     {
         var processes = Process.GetProcesses();
@@ -23,28 +35,26 @@ public static class Metrics
     }
     
     
-    public static async Task<string> CpuNameAsync()
+    private static async Task<string> GetCpuNameAsync()
     {
-        var cpuName = string.Empty;
+        var cpu = Environment.GetEnvironmentVariable("CPU_NAME");
 
-        while (!File.Exists("/proc/cpuinfo"))
+        if (!string.IsNullOrEmpty(cpu))
         {
-            
+            return cpu;
         }
+        
         using var reader = new StreamReader("/proc/cpuinfo");
-        string line;
 
-        while ((line = await reader.ReadLineAsync()) != null)
+        while (await reader.ReadLineAsync() is { } line)
         {
-            if (line.StartsWith("model name"))
-            {
-                var startIndex = line.IndexOf(':') + 2;
-                cpuName = line[startIndex..];
-                break;
-            }
+            if (!line.StartsWith("model name")) continue;
+            var startIndex = line.IndexOf(':') + 2;
+            cpu = line[startIndex..];
+            break;
         }
 
-        return cpuName;
+        return cpu!;
     }
     
     // https://www.baeldung.com/linux/get-cpu-usage#2-getting-cpu-usage-using-procstat
@@ -53,45 +63,37 @@ public static class Metrics
         using var reader = new StreamReader("/proc/stat");
         var line = reader.ReadLine();
 
-        if (line != null && line.StartsWith("cpu "))
-        {
-            var cpuStats = line
-                .Split(' ', StringSplitOptions.RemoveEmptyEntries)
-                .Skip(1)
-                .ToArray();
+        if (line == null || !line.StartsWith("cpu ")) return 0;
+        var cpuStats = line
+            .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+            .Skip(1)
+            .ToArray();
 
-            var idle = long.Parse(cpuStats[3]);
-            var total = cpuStats.Sum(x => long.Parse(x));
+        var idle = long.Parse(cpuStats[3]);
+        var total = cpuStats.Sum(long.Parse);
 
-            var averageIdleTime = (idle * 100) / total;
-            return 100 - averageIdleTime;
-        }
+        var averageIdleTime = (idle * 100) / total;
+        return 100 - averageIdleTime;
 
-        return 0;
     }
     
-    public static void NetworkInfo()
+    public static async Task NetworkInfo()
     {
-        using (var reader = new StreamReader("/proc/net/dev"))
+        using var reader = new StreamReader("/proc/net/dev");
+        while (await reader.ReadLineAsync() is { } line)
         {
-            string line;
-            while ((line = reader.ReadLine()) != null)
-            {
-                if (line.Contains(":"))
-                {
-                    string[] parts = line.Split(':', StringSplitOptions.RemoveEmptyEntries);
-                    string interfaceName = parts[0].Trim();
-                    string[] stats = parts[1].Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            if (!line.Contains(':')) continue;
+            var parts = line.Split(':', StringSplitOptions.RemoveEmptyEntries);
+            var interfaceName = parts[0].Trim();
+            var stats = parts[1].Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-                    long receivedBytes = long.Parse(stats[0]);
-                    long transmittedBytes = long.Parse(stats[8]);
+            var receivedBytes = long.Parse(stats[0]);
+            var transmittedBytes = long.Parse(stats[8]);
 
-                    Console.WriteLine($"Interface: {interfaceName}");
-                    Console.WriteLine($"Received Bytes: {receivedBytes}");
-                    Console.WriteLine($"Transmitted Bytes: {transmittedBytes}");
-                    Console.WriteLine();
-                }
-            }
+            Console.WriteLine($"Interface: {interfaceName}");
+            Console.WriteLine($"Received Bytes: {receivedBytes}");
+            Console.WriteLine($"Transmitted Bytes: {transmittedBytes}");
+            Console.WriteLine();
         }
     }
 
