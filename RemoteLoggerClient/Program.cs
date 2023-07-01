@@ -2,6 +2,8 @@
 using RemoteLoggerClient;
 using RemoteLoggerClient.Models;
 
+Console.WriteLine($"New {Metrics.GetTransmittedBytesForEth0()}");
+
 var connectionId = Environment.GetEnvironmentVariable("HOSTNAME");
 
 Console.WriteLine("Connection starting...");
@@ -28,10 +30,11 @@ while (true)
 {
     var metrics = new MetricsDto()
     {
-        RamUsageMegabytes = Metrics.RamUsageMegabytes(),
-        CPUName = await Metrics.CpuNameAsync(),
-        DiskFreePercentage = Metrics.DiskSpace(),
-        CPUUsagePercentage = Metrics.CpuUsage()
+        RamUsageMegabytes = Metrics.GetRamUsageMegabytes(),
+        CPUName = await Metrics.GetCpuNameAsync(),
+        DiskFreePercentage = Metrics.GetDiskSpacePercentage(),
+        CPUUsagePercentage = Metrics.GetCpuUsage(),
+        Eth0TransmittedBytes = Metrics.GetTransmittedBytesForEth0()
     };
 
     await connection.SendAsync("SendBroadcastMessage", connectionId, metrics);

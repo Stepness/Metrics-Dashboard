@@ -1,28 +1,29 @@
 using System.Diagnostics;
+using System.Net.NetworkInformation;
 
 namespace RemoteLoggerClient;
 
 public static class Metrics
 {
-    private static string cpuName;
+    private static string _cpuName = string.Empty;
 
-    public static async Task<string> CpuNameAsync()
+    public static async Task<string> GetCpuNameAsync()
     {
-        if (string.IsNullOrEmpty(cpuName))
+        if (string.IsNullOrEmpty(_cpuName))
         {
-            cpuName = await GetCpuNameAsync();
+            _cpuName = await RetrieveCpuAsync();
         }
 
-        return cpuName;
+        return _cpuName;
     }
     
-    public static long RamUsageMegabytes()
+    public static long GetRamUsageMegabytes()
     {
         var processes = Process.GetProcesses();
         return processes.Sum(x => x.PrivateMemorySize64) / 1024 / 1024;
     }
 
-    public static int DiskSpace()
+    public static int GetDiskSpacePercentage()
     {
         var drive = new DriveInfo("."); //https://stackoverflow.com/a/62973033
 
@@ -35,7 +36,7 @@ public static class Metrics
     }
     
     
-    private static async Task<string> GetCpuNameAsync()
+    private static async Task<string> RetrieveCpuAsync()
     {
         var cpu = Environment.GetEnvironmentVariable("CPU_NAME");
 
@@ -58,7 +59,7 @@ public static class Metrics
     }
     
     // https://www.baeldung.com/linux/get-cpu-usage#2-getting-cpu-usage-using-procstat
-    public static long CpuUsage()
+    public static long GetCpuUsage()
     {
         using var reader = new StreamReader("/proc/stat");
         var line = reader.ReadLine();
@@ -76,26 +77,19 @@ public static class Metrics
         return 100 - averageIdleTime;
 
     }
-    
-    public static async Task NetworkInfo()
+
+    public static long GetTransmittedBytesForEth0()
     {
-        using var reader = new StreamReader("/proc/net/dev");
-        while (await reader.ReadLineAsync() is { } line)
+        var interfaces = NetworkInterface.GetAllNetworkInterfaces();
+
+        foreach (var networkInterface in interfaces)
         {
-            if (!line.Contains(':')) continue;
-            var parts = line.Split(':', StringSplitOptions.RemoveEmptyEntries);
-            var interfaceName = parts[0].Trim();
-            var stats = parts[1].Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
-            var receivedBytes = long.Parse(stats[0]);
-            var transmittedBytes = long.Parse(stats[8]);
-
-            Console.WriteLine($"Interface: {interfaceName}");
-            Console.WriteLine($"Received Bytes: {receivedBytes}");
-            Console.WriteLine($"Transmitted Bytes: {transmittedBytes}");
-            Console.WriteLine();
+            if (networkInterface is not { Name: "eth0", OperationalStatus: OperationalStatus.Up }) continue;
+            var statistics = networkInterface.GetIPv4Statistics();
+            return statistics.BytesSent;
         }
-    }
 
+        throw new InvalidOperationException("The 'eth0' interface was not found.");
+    }
 }
 

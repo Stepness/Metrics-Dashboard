@@ -70,5 +70,9 @@ function generateCardHTML(data) {
       <span class="label">Disk free:</span>
       <span class="data">${data.diskFreePercentage}%</span>
     </div>
+    <div>
+      <span class="label">Eth0 out:</span>
+      <span class="data">${data.eth0TransmittedBytes} Bytes</span>
+    </div>
   `;
 }

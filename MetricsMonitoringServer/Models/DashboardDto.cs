@@ -7,4 +7,5 @@ public class DashboardDto
     public string CPUName { get; set; }
     public long RamUsageMegabytes { get; set; }
     public int DiskFreePercentage { get; set; }
+    public long Eth0TransmittedBytes { get; set; }
 }
