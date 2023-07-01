@@ -27,38 +27,48 @@ function startSignalR(){
   start();    
 }
 
+
 function generateOrUpdateCard(data) {
   const existingCard = document.getElementById(data.connectionId);
     
   if (existingCard) {
-    existingCard.innerHTML = `
-      <h2>${data.connectionId}</h2>
-      <div>
-      <span class="label">CPU Usage:</span>
-      <span class="data">${data.cpuUsagePercentage}%</span>
-      </div>
-      <div>
-      <span class="label">Ram Usage:</span>
-      <span class="data">${data.ramUsageMegabytes} Mb</span>
-      </div>
-    `;
+    updateCard(existingCard, data);
   } else {
-    const cardContainer = document.getElementById('metrics-container');
-    const card = document.createElement('div');
-    card.id = data.connectionId;
-    card.className = 'card';
-    card.innerHTML = `
-      <h2>${data.connectionId}</h2>
-      <div>
-      <span class="label">CPU Usage:</span>
-      <span class="data">${data.cpuUsagePercentage}%</span>
-      </div>
-      <div>
-      <span class="label">Ram Usage:</span>
-      <span class="data">${data.ramUsageMegabytes} Mb</span>
-      </div>
-    `;
-    cardContainer.appendChild(card);
+    createCard(data);
   }
 }
-  
+
+function updateCard(card, data) {
+  card.innerHTML = generateCardHTML(data);
+}
+
+function createCard(data) {
+  const cardContainer = document.getElementById('metrics-container');
+  const card = document.createElement('div');
+  card.id = data.connectionId;
+  card.className = 'card';
+  card.innerHTML = generateCardHTML(data);
+  cardContainer.appendChild(card);
+}
+
+function generateCardHTML(data) {
+  return `
+    <h2>${data.connectionId}</h2>
+    <div>
+      <span class="label">CPU Name:</span>
+      <span class="data">${data.cpuName}</span>
+    </div>
+    <div>
+      <span class="label">CPU Usage:</span>
+      <span class="data">${data.cpuUsagePercentage}%</span>
+    </div>
+    <div>
+      <span class="label">Ram Usage:</span>
+      <span class="data">${data.ramUsageMegabytes} MB</span>
+    </div>
+    <div>
+      <span class="label">Disk free:</span>
+      <span class="data">${data.diskFreePercentage}%</span>
+    </div>
+  `;
+}
