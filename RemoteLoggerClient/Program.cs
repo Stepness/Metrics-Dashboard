@@ -23,9 +23,6 @@ connection.Closed += async (error) =>
 await connection.StartAsync();
 Console.WriteLine("Connection started");
 
-await connection.InvokeAsync("JoinClientGroup");
-Console.WriteLine("Joined client group");
-
 while (true)
 {
     var metrics = new MetricsDto()

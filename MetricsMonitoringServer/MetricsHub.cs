@@ -27,10 +27,4 @@ public class MetricsHub : Hub
         await Groups.AddToGroupAsync(Context.ConnectionId, HubSettings.DashboardGroup);
         Console.WriteLine("New dashboard joined");
     }
-    
-    public async Task JoinClientGroup()
-    {
-        await Groups.AddToGroupAsync(Context.ConnectionId, HubSettings.ClientGroup);
-        Console.WriteLine("New client joined");
-    }
 }
