@@ -4,6 +4,21 @@ const connection = new signalR.HubConnectionBuilder()
     .configureLogging(signalR.LogLevel.Information)
     .build();
 
+const lastReceivedDataTimestamps = new Map();
+
+setInterval(() => {
+  debugger
+  const currentTimestamp = Date.now();
+  lastReceivedDataTimestamps.forEach((date, connectionId) => {
+    const lastReceivedTimestamp = date;
+    const elapsedTime = currentTimestamp - lastReceivedTimestamp;
+    
+    if (elapsedTime >= 3000) {
+      setUnhealthy(connectionId);
+    }
+  });
+}, 1000);
+
 function startSignalR(){
   async function start() {
       try {
@@ -17,6 +32,7 @@ function startSignalR(){
 
   connection.on("ReceiveBroadcastMessage", (dashboardDto) => {
       console.log(dashboardDto);
+      lastReceivedDataTimestamps.set(dashboardDto.connectionId, Date.now());
       generateOrUpdateCard(dashboardDto)
   })
 
@@ -53,7 +69,10 @@ function createCard(data) {
 
 function generateCardHTML(data) {
   return `
-    <h2>${data.connectionId}</h2>
+    <div class="connection-id">
+      <h2 style="display: inline;">${data.connectionId}</h2>
+      <div class="healthy" id="${data.connectionId}-health"></div>
+    </div>
     <div>
       <span class="label">CPU Name:</span>
       <span class="data">${data.cpuName}</span>
@@ -75,4 +94,10 @@ function generateCardHTML(data) {
       <span class="data">${data.eth0TransmittedBytes.toLocaleString()} Bytes</span>
     </div>
   `;
+}
+
+function setUnhealthy(connectionId){
+  const card = document.getElementById(`${connectionId}-health`);
+  card.classList.add("unhealthy")
+  card.classList.remove("healthy")
 }

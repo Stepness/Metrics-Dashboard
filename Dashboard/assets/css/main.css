@@ -42,5 +42,25 @@ main {
 
 .card h2 {
   font-size: 22px;
-  margin-top: 0;
+}
+
+.connection-id {
+  margin-bottom: 10px;
+}
+
+.unhealthy, .healthy {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-left: 5px;
+  margin-bottom: 1px;
+}
+
+.unhealthy {
+  background-color: #f67098;
+}
+
+.healthy {
+  background-color: #d3ffce;
 }

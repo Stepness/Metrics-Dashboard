@@ -1,8 +1,9 @@
 name: Dashboard deploy
 
-on: [push]
-    # paths:
-    #   - Dashboard/**
+on: 
+  push:
+    paths:
+      - Dashboard/**
     
 env:
   AZURE_STATIC_WEB_APPS_API_TOKEN:
