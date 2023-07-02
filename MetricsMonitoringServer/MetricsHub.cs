@@ -1,6 +1,7 @@
 using AutoMapper;
 using MetricsMonitoringServer.Models;
 using MetricsMonitoringServer.Settings;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace MetricsMonitoringServer;
@@ -22,6 +23,7 @@ public class MetricsHub : Hub
         await Clients.Group(HubSettings.DashboardGroup).SendAsync("ReceiveBroadcastMessage", dashboardDto);
     }
 
+    [Authorize]
     public async Task JoinDashboardGroup()
     {
         await Groups.AddToGroupAsync(Context.ConnectionId, HubSettings.DashboardGroup);
