@@ -1,29 +1,25 @@
 namespace MetricsMonitoringServer.Services;
 
-public class Repository: IRepository
+public class FakeRepository: IRepository
 {
     private List<User> _users = new List<User>
     {
         new User 
         {
-            Id = 1, Username = "peter", Password = "peter123"            
+            Id = 1, Username = "peter", Password = "peter123", Role      = "Admin"
         },
         new User
         {
-            Id = 2, Username = "joydip", Password = "joydip123"
+            Id = 2, Username = "joydip", Password = "joydip123", Role = "Viewer"
         },
         new User
         {
             Id = 3, Username = "james", Password = "james123"
         }
     };
-    public async Task<bool> Authenticate(string username, string password)
+    public async Task<User?> Authenticate(string username, string password)
     {
-        if(await Task.FromResult(_users.SingleOrDefault(x => x.Username == username && x.Password == password)) != null)
-        {
-            return true;
-        }
-        return false;
+        return await Task.FromResult(_users.SingleOrDefault(x => x.Username.Equals(username, StringComparison.OrdinalIgnoreCase) && x.Password == password)) ?? null;
     }
     
     public async Task<List<string>> GetUserNames()

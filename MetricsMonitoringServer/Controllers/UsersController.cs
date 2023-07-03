@@ -1,6 +1,11 @@
-using System.ComponentModel.DataAnnotations;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using MetricsMonitoringServer.Identity;
+using MetricsMonitoringServer.Models;
 using MetricsMonitoringServer.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.IdentityModel.Tokens;
 
 namespace MetricsMonitoringServer.Controllers;
 
@@ -10,38 +15,31 @@ using Microsoft.AspNetCore.Mvc;
 [Route("[controller]")]
 public class UsersController : ControllerBase
 {
-    private IRepository _userService;
+    private readonly IRepository _repository;
 
-    public UsersController(IRepository userService)
+    public UsersController(IRepository repository)
     {
-        _userService = userService;
+        _repository = repository;
     }
 
-    [HttpPost("authenticate")]
-    public async Task<IActionResult> Authenticate([FromBody]AuthenticateModel model)
+    [HttpPost("login")]
+    public async Task<IActionResult> Login(LoginDto model)
     {
-        var user = await _userService.Authenticate(model.Username, model.Password);
+        var user = await _repository.Authenticate(model.Username, model.Password);
 
         if (user == null)
             return BadRequest(new { message = "Username or password is incorrect" });
 
-        return Ok(user);
+        return Ok(JwtTokenHelper.GenerateJsonWebToken(user));
     }
 
-    [Authorize]
+    [Authorize(Policy = IdentityData.ViewerUserPolicyName)]
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var users = await _userService.GetUserNames();
+        var users = await _repository.GetUserNames();
         return Ok(users);
     }
-}
 
-public class AuthenticateModel
-{
-    [Required]
-    public string Username { get; set; }
 
-    [Required]
-    public string Password { get; set; }
 }

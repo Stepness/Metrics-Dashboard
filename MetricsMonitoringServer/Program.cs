@@ -1,59 +1,27 @@
-using MetricsMonitoringServer;
+using MetricsMonitoringServer.Controllers;
+using MetricsMonitoringServer.Extensions;
 using MetricsMonitoringServer.Services;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(option =>
-{
-    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
-    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        In = ParameterLocation.Header,
-        Description = "Please enter a valid token",
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        BearerFormat = "JWT",
-        Scheme = "Bearer"
-    });
-    option.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type=ReferenceType.SecurityScheme,
-                    Id="Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
-    });
-});
+builder.Services.AddCustomSwaggerConfiguration();
 
 builder.Services.AddSignalR();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddScoped<IRepository, Repository>();
+builder.Services.AddScoped<IRepository, FakeRepository>();
 
-builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = "BasicAuthentication";
-        options.DefaultChallengeScheme = "BasicAuthentication";
-    })
-    .AddScheme<AuthenticationSchemeOptions, BasicAuthMiddleware>("BasicAuthentication", null);
+builder.Services.AddCustomAuthentication();
+builder.Services.AddCustomAuthorization();
 
-const string myAllowSpecificOrigins = "_myAllowSpecificOrigins";
+const string allowedOrigins = "AllowedOrigins";
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: myAllowSpecificOrigins,
-        policy  =>
+    options.AddPolicy(name: allowedOrigins,
+        policy =>
         {
             policy
                 .AllowAnyHeader()
@@ -64,15 +32,13 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-app.UseCors(myAllowSpecificOrigins);
+app.UseCors(allowedOrigins);
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
+app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
