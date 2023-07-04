@@ -1,31 +1,43 @@
+using MetricsMonitoringServer.Models;
+
 namespace MetricsMonitoringServer.Services;
 
 public class FakeRepository: IRepository
 {
-    private List<User> _users = new List<User>
+    private List<UserEntity> _users = new List<UserEntity>
     {
-        new User 
+        new UserEntity 
         {
-            Id = 1, Username = "peter", Password = "peter123", Role      = "Admin"
+            Id = Guid.NewGuid().ToString(), Username = "peter", Password = "peter123", Role      = "Admin"
         },
-        new User
+        new UserEntity
         {
-            Id = 2, Username = "joydip", Password = "joydip123", Role = "Viewer"
+            Id = Guid.NewGuid().ToString(), Username = "joydip", Password = "joydip123", Role = "Viewer"
         },
-        new User
+        new UserEntity
         {
-            Id = 3, Username = "james", Password = "james123"
+            Id = Guid.NewGuid().ToString(), Username = "james", Password = "james123"
         }
     };
-    public async Task<User?> Authenticate(string username, string password)
+    public async Task<UserEntity?> Authenticate(string username, string password)
     {
         return await Task.FromResult(_users.SingleOrDefault(x => x.Username.Equals(username, StringComparison.OrdinalIgnoreCase) && x.Password == password)) ?? null;
     }
     
-    public async Task<List<string>> GetUserNames()
+    public async Task<List<UserEntity>> GetAllUsers()
     {
-        var users = _users.Select(user => user.Username).ToList();
+        var users = _users.ToList();
         
         return await Task.FromResult(users);
+    }
+
+    public Task<AddUserResult> AddUserAsync(UserEntity user)
+    {
+        _users.Add(user);
+        return Task.FromResult(new AddUserResult
+        {
+            Result = AddUserResultType.Success,
+            User = user
+        });
     }
 }

@@ -36,11 +36,11 @@ public static class AuthExtensions
     {
         serviceCollection.AddAuthorization(options =>
         {
-            options.AddPolicy(IdentityData.AdminUserPolicyName, 
-                policy=>policy.RequireClaim(IdentityData.RoleClaimName, "Admin"));
+            options.AddPolicy(IdentityData.AdminUserPolicy, 
+                policy=>policy.RequireClaim(IdentityData.RoleClaim, Roles.Admin));
             
-            options.AddPolicy(IdentityData.ViewerUserPolicyName, 
-                policy=>policy.RequireClaim(IdentityData.RoleClaimName, "Admin", "Viewer"));
+            options.AddPolicy(IdentityData.ViewerUserPolicy, 
+                policy=>policy.RequireClaim(IdentityData.RoleClaim, Roles.Admin, Roles.Viewer));
         });
 
         return serviceCollection;

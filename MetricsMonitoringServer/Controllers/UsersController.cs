@@ -4,6 +4,7 @@ using System.Text;
 using MetricsMonitoringServer.Identity;
 using MetricsMonitoringServer.Models;
 using MetricsMonitoringServer.Services;
+using MetricsMonitoringServer.Settings;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 
@@ -22,24 +23,40 @@ public class UsersController : ControllerBase
         _repository = repository;
     }
 
+    [HttpPost("register")]
+    public async Task<IActionResult> Register(SignDto signDto)
+    {
+        var user = new UserEntity
+        {
+            Username = signDto.Username,
+            Password = signDto.Password,
+            Role = Roles.Guest
+        };
+        
+        var addUserResult = await _repository.AddUserAsync(user);
+
+        if (addUserResult.Result == AddUserResultType.UserAlreadyExists)
+            return Conflict(new { message = "Username already exist" });
+
+        return Ok(JwtTokenHelper.GenerateJsonWebToken(addUserResult.User));
+    }
+    
     [HttpPost("login")]
-    public async Task<IActionResult> Login(LoginDto model)
+    public async Task<IActionResult> Login(SignDto model)
     {
         var user = await _repository.Authenticate(model.Username, model.Password);
 
         if (user == null)
-            return BadRequest(new { message = "Username or password is incorrect" });
+            return Unauthorized(new { message = "Username or password is incorrect" });
 
         return Ok(JwtTokenHelper.GenerateJsonWebToken(user));
     }
 
-    [Authorize(Policy = IdentityData.ViewerUserPolicyName)]
+    [Authorize(Policy = IdentityData.AdminUserPolicy)]
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var users = await _repository.GetUserNames();
-        return Ok(users);
+        var users = await _repository.GetAllUsers();
+        return Ok(users.Select(x => x.Username).ToList());
     }
-
-
 }

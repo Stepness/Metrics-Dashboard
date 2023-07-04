@@ -1,6 +1,7 @@
 using MetricsMonitoringServer.Controllers;
 using MetricsMonitoringServer.Extensions;
 using MetricsMonitoringServer.Services;
+using Microsoft.Azure.Cosmos;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -12,10 +13,22 @@ builder.Services.AddCustomSwaggerConfiguration();
 
 builder.Services.AddSignalR();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddScoped<IRepository, FakeRepository>();
+builder.Services.AddScoped<IRepository, CosmosRepository>(); //Use FakeRepository for local testing
 
 builder.Services.AddCustomAuthentication();
 builder.Services.AddCustomAuthorization();
+
+builder.Services.AddSingleton(new CosmosClient(
+    connectionString: builder.Configuration["CosmosDBConnectionString"] //Its a secret 🤫
+    ,
+    new CosmosClientOptions
+    {
+        SerializerOptions = new CosmosSerializationOptions
+        {
+            PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase
+        }
+    }
+));
 
 const string allowedOrigins = "AllowedOrigins";
 builder.Services.AddCors(options =>
