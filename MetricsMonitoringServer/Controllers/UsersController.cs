@@ -49,7 +49,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Policy = IdentityData.AdminUserPolicy)]
+    [Authorize(Policy = IdentityData.ViewerUserPolicy)]
     public async Task<IActionResult> GetAll()
     {
         var users = await _repository.GetAllUsers();

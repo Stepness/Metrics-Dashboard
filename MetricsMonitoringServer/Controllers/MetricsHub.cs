@@ -24,7 +24,7 @@ public class MetricsHub : Hub
         await Clients.Group(HubSettings.DashboardGroup).SendAsync("ReceiveBroadcastMessage", dashboardDto);
     }
 
-    [Authorize(Policy = IdentityData.ViewerUserPolicy)]
+    //[Authorize(Policy = IdentityData.ViewerUserPolicy)]
     public async Task JoinDashboardGroup()
     {
         await Groups.AddToGroupAsync(Context.ConnectionId, HubSettings.DashboardGroup);
