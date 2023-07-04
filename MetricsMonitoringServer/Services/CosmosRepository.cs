@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using MetricsMonitoringServer.Models;
+using MetricsMonitoringServer.Settings;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 
@@ -77,6 +78,37 @@ public class CosmosRepository : IRepository
         Console.WriteLine($"Failed to add user with username '{user.Username}'.");
         return new AddUserResult { Result = AddUserResultType.Success };
     }
+    
+    public async Task<bool> UpdateUserRoleToViewer(string username)
+    {
+        var user = await GetUserByUsernameAsync(username);
+    
+        if (user == null)
+        {
+            Console.WriteLine($"User with ID '{username}' not found.");
+            return false;
+        }
+
+        if (user.Role == Roles.Admin)
+        {
+            Console.WriteLine("You cant demote an admin");
+            return false;
+        }
+
+        user.Role = Roles.Viewer;
+    
+        var response = await _loginContainer.ReplaceItemAsync(user, user.Id);
+    
+        if (response.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            Console.WriteLine($"User with ID '{username}' role updated to 'Admin'.");
+            return true;
+        }
+    
+        Console.WriteLine($"Failed to update role for user with ID '{username}'.");
+        return false;
+    }
+
 
     private async Task<UserEntity?> GetUserByUsernameAsync(string username)
     {

@@ -1,18 +1,15 @@
 using MetricsMonitoringServer.Models;
+using MetricsMonitoringServer.Settings;
 
 namespace MetricsMonitoringServer.Services;
 
 public class FakeRepository: IRepository
 {
-    private List<UserEntity> _users = new List<UserEntity>
+    private readonly List<UserEntity> _users = new()
     {
-        new UserEntity 
-        {
-            Id = Guid.NewGuid().ToString(), Username = "peter", Password = "peter123", Role      = "Admin"
-        },
         new UserEntity
         {
-            Id = Guid.NewGuid().ToString(), Username = "joydip", Password = "joydip123", Role = "Viewer"
+            Id = Guid.NewGuid().ToString(), Username = "peter", Password = "peter123", Role      = "Admin"
         },
         new UserEntity
         {
@@ -39,5 +36,16 @@ public class FakeRepository: IRepository
             Result = AddUserResultType.Success,
             User = user
         });
+    }
+
+    public Task<bool> UpdateUserRoleToViewer(string username)
+    {
+        var user = _users.First(x => x.Username == username);
+        
+        if (user.Role == Roles.Admin)
+            return Task.FromResult(false);
+        
+        user.Role = Roles.Viewer;
+        return Task.FromResult(true);
     }
 }

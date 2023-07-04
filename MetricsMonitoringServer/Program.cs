@@ -13,22 +13,33 @@ builder.Services.AddCustomSwaggerConfiguration();
 
 builder.Services.AddSignalR();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddScoped<IRepository, CosmosRepository>(); //Use FakeRepository for local testing
 
 builder.Services.AddCustomAuthentication();
 builder.Services.AddCustomAuthorization();
 
-builder.Services.AddSingleton(new CosmosClient(
-    connectionString: builder.Configuration["CosmosDBConnectionString"] //Its a secret 🤫
-    ,
-    new CosmosClientOptions
-    {
-        SerializerOptions = new CosmosSerializationOptions
+var cosmosDbConnectionString = builder.Configuration["CosmosDbConnectionString"]; //Its a secret 🤫
+
+if (string.IsNullOrEmpty(cosmosDbConnectionString))
+{
+    Console.WriteLine("No CosmosDb connection string, switching to in-memory db");
+    builder.Services.AddScoped<IRepository, FakeRepository>();
+}
+else
+{
+    builder.Services.AddScoped<IRepository, CosmosRepository>();
+
+    builder.Services.AddSingleton(new CosmosClient(
+        cosmosDbConnectionString,
+        new CosmosClientOptions
         {
-            PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase
+            SerializerOptions = new CosmosSerializationOptions
+            {
+                PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase
+            }
         }
-    }
-));
+    ));
+}
+
 
 const string allowedOrigins = "AllowedOrigins";
 builder.Services.AddCors(options =>

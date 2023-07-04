@@ -1,12 +1,8 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using MetricsMonitoringServer.Identity;
 using MetricsMonitoringServer.Models;
 using MetricsMonitoringServer.Services;
 using MetricsMonitoringServer.Settings;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.IdentityModel.Tokens;
 
 namespace MetricsMonitoringServer.Controllers;
 
@@ -52,11 +48,22 @@ public class UsersController : ControllerBase
         return Ok(JwtTokenHelper.GenerateJsonWebToken(user));
     }
 
-    [Authorize(Policy = IdentityData.AdminUserPolicy)]
     [HttpGet]
+    [Authorize(Policy = IdentityData.AdminUserPolicy)]
     public async Task<IActionResult> GetAll()
     {
         var users = await _repository.GetAllUsers();
         return Ok(users.Select(x => x.Username).ToList());
     }
+
+    [HttpPut("{username}/promote-role")]
+    [Authorize(Policy = IdentityData.AdminUserPolicy)]
+    public async Task<IActionResult> PromoteRole(string username)
+    {
+        if (await _repository.UpdateUserRoleToViewer(username))
+            return Ok();
+
+        return BadRequest();
+    }
+    
 }
