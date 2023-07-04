@@ -1,6 +1,6 @@
 const connection = new signalR.HubConnectionBuilder()
-    .withUrl("https://localhost:8080/hubs/metrics", {
-    //.withUrl("https://metrics-monitoring-server.azurewebsites.net/hubs/metrics", {
+    //.withUrl("https://localhost:8080/hubs/metrics", {
+    .withUrl("https://metrics-monitoring-server.azurewebsites.net/hubs/metrics", {
     accessTokenFactory: () => {
       return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJSb2xlIjoiQWRtaW4iLCJzdWIiOiJzdGVwIiwiZXhwIjoxNjg4NTkxODA4LCJpc3MiOiJNZSIsImF1ZCI6IllvdSJ9.vdhSD93DpLdKYZD2T_xg5xwWlkhAeOfzFGENQxl1buI';
     }
