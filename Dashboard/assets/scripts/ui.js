@@ -1,4 +1,3 @@
-
 function generateOrUpdateCard(data) {
   const existingCard = document.getElementById(data.connectionId);
       

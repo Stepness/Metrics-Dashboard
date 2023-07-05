@@ -1,5 +1,3 @@
-const serviceDomain = "https://metrics-monitoring-server.azurewebsites.net"
-
 function login() {
   var usernameInput = document.getElementById('username');
   var passwordInput = document.getElementById('password');
@@ -13,43 +11,26 @@ function login() {
     password: password
   };
 
-  fetch(`${serviceDomain}/users/login`, {
+  fetch("https://metrics-monitoring-server.azurewebsites.net/users/login", {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
     body: JSON.stringify(requestBody)
   })
     .then(function(response) {
       if (response.ok) {
-        localStorage.setItem("jwtToken", response.body)
+        return response.text();
       } 
       else {
         errorMessage.textContent = 'Invalid username or password';
       }
     })
-    .catch(function(error) {
-      console.error('An error occurred during login:', error);
-    });
-}
-
-function validate() {
-  var jwtToken = localStorage.getItem('jwtToken');
-
-  fetch(`${serviceDomain}/users/validate`, {
-    method: 'POST',
-    headers: {
-      'Authorization': 'Bearer ' + jwtToken 
-    }
-  })
-    .then(function(response) {
-      if (response.ok) {
-        if (window.location.href.includes('/login.html')) {
-          window.location.href = '/index.html';
-        }
-      } else {
-        if (!window.location.href.includes('/login.html'))
-          window.location.href = '/login.html';
-      }
+    .then(function(jwtToken){
+      localStorage.setItem('jwtToken', jwtToken);
+      window.location.href = './index.html';
     })
     .catch(function(error) {
-      console.error('An error occurred during validation:', error);
+      console.error('An error occurred during login:', error);
     });
 }
