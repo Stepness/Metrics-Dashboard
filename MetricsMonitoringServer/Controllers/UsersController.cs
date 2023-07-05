@@ -65,5 +65,12 @@ public class UsersController : ControllerBase
 
         return BadRequest();
     }
+
+    [HttpPost("validate")]
+    [Authorize]
+    public IActionResult Validate()
+    {
+        return Ok();
+    }
     
 }

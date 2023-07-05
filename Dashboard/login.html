@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Login</title>
+  <script src="assets/scripts/login.js"></script>
   <link rel="stylesheet" href="assets/css/main.css" />
   <link rel="stylesheet" href="assets/css/login.css" />
 </head>
@@ -12,14 +13,17 @@
   <div class="login-container">
     <div class="login-card">
       <h1>Login</h1>
-      <input type="text" class="login-input" placeholder="Username">
-      <input type="password" class="login-input" placeholder="Password">
-      <div id="error-message">im an error</div>
+      <input id="username" type="text" class="login-input" placeholder="Username">
+      <input id="password" type="password" class="login-input" placeholder="Password">
+      <div id="error-message"></div>
       <div class="button-container">
         <button class="login-button">Register</button>
-        <button class="login-button">Login</button>
+        <button class="login-button" onclick="login()">Login</button>
       </div>
     </div>
   </div>
+  <script>
+    validate()
+  </script>
 </body>
 </html>
