@@ -14,6 +14,7 @@ async function checkRoleClaim() {
     
     var role = decodedToken.Role;
     if (role === 'Admin' || role === 'Viewer') {
+      $('#index-error-message').text('Looks like there are no active machines.')
       await startSignalR();
       healthCheck();
     } 

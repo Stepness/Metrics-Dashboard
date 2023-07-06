@@ -37,6 +37,8 @@ async function startSignalR(){
 
   connection.on("ReceiveBroadcastMessage", (dashboardDto) => {
       console.log(dashboardDto);
+      if($('#index-error-message'))
+        $('#index-error-message').text("")
       lastReceivedDataTimestamps.set(dashboardDto.connectionId, Date.now());
       generateOrUpdateCard(dashboardDto)
   })
@@ -45,5 +47,5 @@ async function startSignalR(){
       await start();
   });
 
-  await start();    
+  await start();
 }
