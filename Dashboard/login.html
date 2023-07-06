@@ -2,7 +2,9 @@
 <html>
 <head>
   <title>Login</title>
+  <script src="assets/scripts/jQuery/jquery-3.7.0.min.js"></script>
   <script src="assets/scripts/login.js"></script>
+  <script src="assets/scripts/register.js"></script>
   <script src="assets/scripts/validate.js"></script>
   <link rel="stylesheet" href="assets/css/main.css" />
   <link rel="stylesheet" href="assets/css/login.css" />
@@ -18,13 +20,13 @@
       <input id="password" type="password" class="login-input" placeholder="Password">
       <div id="error-message"></div>
       <div class="button-container">
-        <button class="login-button">Register</button>
+        <button class="login-button" onclick="register()">Register</button>
         <button class="login-button" onclick="login()">Login</button>
       </div>
     </div>
   </div>
   <script>
-    validate()
+    validateUser()
   </script>
 </body>
 </html>
