@@ -49,11 +49,11 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Policy = IdentityData.ViewerUserPolicy)]
+    [Authorize(Policy = IdentityData.AdminUserPolicy)]
     public async Task<IActionResult> GetAll()
     {
         var users = await _repository.GetAllUsers();
-        return Ok(users.Select(x => x.Username).ToList());
+        return Ok(users.Select(x => new{ x.Username, x.Role }).ToList());
     }
 
     [HttpPut("{username}/promote-role")]
