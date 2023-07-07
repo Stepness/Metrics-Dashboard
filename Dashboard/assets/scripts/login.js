@@ -1,10 +1,10 @@
 function login() {
-  var usernameInput = $('#username');
-  var passwordInput = $('#password');
+  var username = $('#username').val().trim();
+  var password = $('#password').val();
   var errorMessage = $('#error-message');
 
-  var username = usernameInput.val();
-  var password = passwordInput.val();
+  if(!isLoginValid(username, password))
+    return;
 
   var requestBody = {
     username: username,
@@ -30,13 +30,13 @@ function login() {
 
 
 async function register() {
-  var usernameInput = $('#username');
-  var passwordInput = $('#password');
+  var username = $('#username').val().trim();
+  var password = $('#password').val();
   var errorMessage = $('#error-message');
 
-  var username = usernameInput.val();
-  var password = passwordInput.val();
-
+  if(!isLoginValid(username, password))
+  return;
+  
   var requestBody = {
     username: username,
     password: password
@@ -58,4 +58,13 @@ async function register() {
         console.error('An error occurred during login:', error);
     }
   });
+}
+
+function isLoginValid() {
+  if (username === '' || password.value === '') {
+    $("#error-message").text('Please enter a username and password.');
+    return false;
+  }
+
+  return true;
 }
