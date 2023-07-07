@@ -1,19 +1,14 @@
-async function initializeIndex(){
+async function indexPageLoad(){
   await validateUser();
   await checkRoleClaim();
 }
 
 async function checkRoleClaim() {
-  var jwtToken = localStorage.getItem('jwtToken');
+  var jwtToken = getTokenBody();
   
   if (jwtToken) {
-    var tokenParts = jwtToken.split('.');
-    var base64Url = tokenParts[1];
-    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    var decodedToken = JSON.parse(atob(base64));
-    
-    var role = decodedToken.Role;
-    var name = decodedToken.sub;
+    var role = jwtToken.Role;
+    var name = jwtToken.sub;
     
     fillUserMenu(role, name);
     

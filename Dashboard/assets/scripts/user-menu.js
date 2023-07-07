@@ -8,7 +8,7 @@ function fillUserMenu(role, name) {
   var userMenuDiv = $("#userMenuDropDown");
   
     if (role === "Admin"){
-      var link = $("<a>").attr("href", "#").text("Manage users");
+      var link = $("<a>").attr("href", "./users.html").text("Manage users");
       userMenuDiv.append(link)
     }
 
