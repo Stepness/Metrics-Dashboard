@@ -8,21 +8,27 @@
   <script src="assets/scripts/ui.js"></script>
   <script src="assets/scripts/validate.js"></script>
   <script src="assets/scripts/signalr-connection.js"></script>
+  <script src="assets/scripts/user-menu.js"></script>
   <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/user-menu.css" />
 </head>
 <body> 
   <header class="header">
     <h1>Live Dashboard</h1>
+    <div class="dropdown">
+      <button id="userMenubtn" onclick="openUserMenu()" class="dropbtn"></button>
+      <div id="userMenuDropDown" class="dropdown-content">
+      </div>
+    </div>
   </header>
   <main>
     <div id="index-error-message"></div>
     <div class="card-container" id="metrics-container">
       <!-- Metrics -->
     </div>
-
   </main>
   <script>
-    initializeIndex();
+    initializeIndex();    
   </script>
 </body>
 </html>

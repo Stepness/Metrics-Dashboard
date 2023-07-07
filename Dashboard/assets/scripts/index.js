@@ -13,14 +13,19 @@ async function checkRoleClaim() {
     var decodedToken = JSON.parse(atob(base64));
     
     var role = decodedToken.Role;
+    var name = decodedToken.sub;
+    
+    fillUserMenu(role, name);
+    
     if (role === 'Admin' || role === 'Viewer') {
-      $('#index-error-message').text('Looks like there are no active machines.')
+      $('#index-error-message').text('Looks like there are no active machines.');
       await startSignalR();
       healthCheck();
     } 
     else{
       $('#index-error-message').text('You dont have enough permissions. Contact an administrator.')
-    } 
+    }
+
   } 
 }
   
