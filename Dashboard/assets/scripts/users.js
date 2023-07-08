@@ -18,19 +18,30 @@ async function generateUserTable() {
   var users = await getUsers();
 
   users.forEach(function (user) {
-    var listItem = $(`<tr><td>${user.username}</td><td>${user.role}</td><td></td></tr>`);
-    var userButton = $('<button></button>').text(user.username);
+    var listItem = $(`<tr><td>${user.username}</td><td id="${user.username}-role">${user.role}</td><td></td</tr>`);
 
-    userButton.click(function () {
-    });
+    if(user.role === 'Guest' ){
+      var promoteButton = $('<button class="promote-button"></button>').text("Promote");
+  
+      promoteButton.click(async function () {
+        $(this).prop('disabled', true); 
+        
+        if(await promoteToViewer(user.username)){
+          $(`#${user.username}-role`).text("Viewer")
+          $(this).remove();
+        }else
 
-    listItem.find('td:last-child').append(userButton);
+        $(this).prop('disabled', false); 
+      });
+  
+      listItem.find('td:last-child').append(promoteButton);
+    }
     $('#user-table').append(listItem);
   });
 }
 
 
-async function getUsers(userName) {
+async function getUsers(username) {
   var jwtToken = localStorage.getItem('jwtToken');
 
   var users = await $.ajax({
@@ -40,7 +51,7 @@ async function getUsers(userName) {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + jwtToken
     },
-    data: JSON.stringify({ name: userName }),
+    data: JSON.stringify({ name: username }),
     contentType: 'application/json',
     success: function(response) {
     },
@@ -52,6 +63,25 @@ async function getUsers(userName) {
   return users;
 }
 
-async function promoteToViewer(){
+async function promoteToViewer(username){
+  var jwtToken = localStorage.getItem('jwtToken');
+  var success = false;
 
+  await $.ajax({
+    url: `https://metrics-monitoring-server.azurewebsites.net/users/${username}/promote-role`,
+    type: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + jwtToken
+    },
+    contentType: 'application/json',
+    success: function(response) {
+      success = true
+    },
+    error: function(xhr, status, error) {
+      console.error('An error occurred during promotion:', error);
+    }
+  });
+
+  return success;
 }

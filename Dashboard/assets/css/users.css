@@ -14,6 +14,9 @@ td {
   border-style: solid;
   border-width: 5px;
   border-color: #7070B3;
+
+  width: 33%;
+  height: 100%;
 }
 
 td:first-child {
@@ -22,4 +25,22 @@ td:first-child {
 
 td:last-child {
   border-radius: 0 10px 10px 0;
+}
+
+.promote-button{
+  position: relative; 
+  left: 30%; 
+  top: 10%;
+  cursor: pointer;
+  transition-duration: 0.4s;
+  background-color: #7070B3; 
+  color: white; 
+  border: 2px solid white;
+  border-radius: 5px;
+  min-width: 60%;
+}
+
+.promote-button:hover {
+  background-color: white; /* Green */
+  color: black;
 }
