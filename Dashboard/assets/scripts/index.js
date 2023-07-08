@@ -55,7 +55,7 @@ async function startSignalR(){
   async function start() {
     try {
       await connection.start();
-      console.log("SignalR Connected.");
+      console.info("SignalR Connected.");
       await connection.invoke("JoinDashboardGroup");
     } catch (err) {
         console.log(err);

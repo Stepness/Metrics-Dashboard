@@ -1,5 +1,5 @@
-function usersPageLoad(){
-  validateUser();
+async function usersPageLoad(){
+  await validateUser();
 
   var jwtToken = getTokenBody();
   
@@ -11,42 +11,47 @@ function usersPageLoad(){
   }
 
   fillUserMenu(role, name);
-  generateUserTable();
+  await generateUserTable();
 }
 
-function generateUserTable(){
-  // User data (example)
-  var users = [
-    { name: 'User 1', id: 1 },
-    { name: 'User 2', id: 2 },
-    { name: 'User 3', id: 3 }
-  ];
+async function generateUserTable() {
+  var users = await getUsers();
 
-  users.forEach(function(user) {
-    var listItem = $('<li></li>');
-    var userButton = $('<button></button>').text(user.name);
-    userButton.click(function() {
-      // sendHttpRequest(user.name);
+  users.forEach(function (user) {
+    var listItem = $(`<tr><td>${user.username}</td><td>${user.role}</td><td></td></tr>`);
+    var userButton = $('<button></button>').text(user.username);
+
+    userButton.click(function () {
     });
-    listItem.append(userButton);
-    $('#user-list').append(listItem);
+
+    listItem.find('td:last-child').append(userButton);
+    $('#user-table').append(listItem);
+  });
+}
+
+
+async function getUsers(userName) {
+  var jwtToken = localStorage.getItem('jwtToken');
+
+  var users = await $.ajax({
+    url: 'https://metrics-monitoring-server.azurewebsites.net/users/',
+    type: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + jwtToken
+    },
+    data: JSON.stringify({ name: userName }),
+    contentType: 'application/json',
+    success: function(response) {
+    },
+    error: function(error) {
+      console.error('An error occurred when retrieving users', error)
+    }
   });
 
-  // Function to send HTTP request with user name
-  function sendHttpRequest(userName) {
-    // Replace this code with your actual HTTP request logic
-    // Example using jQuery AJAX:
-    $.ajax({
-      url: 'http://example.com/api/users',
-      method: 'POST',
-      data: JSON.stringify({ name: userName }),
-      contentType: 'application/json',
-      success: function(response) {
-        // Handle the response
-      },
-      error: function(error) {
-        // Handle the error
-      }
-    });
-  }
+  return users;
+}
+
+async function promoteToViewer(){
+
 }

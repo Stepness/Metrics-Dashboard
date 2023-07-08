@@ -1,4 +1,4 @@
-function login() {
+async function login() {
   var username = $('#username').val().trim();
   var password = $('#password').val();
   var errorMessage = $('#error-message');
@@ -11,7 +11,7 @@ function login() {
     password: password
   };
 
-  $.ajax({
+  await $.ajax({
     url: 'https://metrics-monitoring-server.azurewebsites.net/users/login',
     type: 'POST',
     dataType: 'text',
@@ -60,7 +60,7 @@ async function register() {
   });
 }
 
-function isLoginValid() {
+function isLoginValid(username, password) {
   if (username === '' || password.value === '') {
     $("#error-message").text('Please enter a username and password.');
     return false;
