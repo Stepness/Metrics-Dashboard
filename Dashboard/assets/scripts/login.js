@@ -61,7 +61,7 @@ async function register() {
 }
 
 function isLoginValid(username, password) {
-  if (username === '' || password.value === '') {
+  if (username === '' || password.trim() === '') {
     $("#error-message").text('Please enter a username and password.');
     return false;
   }
